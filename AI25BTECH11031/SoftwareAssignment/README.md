@@ -1,4 +1,5 @@
 Image Compression Using Truncated SVD
+
 Project Overview
 This project implements image compression using the Truncated Singular Value Decomposition (SVD).
 A grayscale image is represented as a matrix, where each element represents a pixel intensity (0 = black, 255 = white).
