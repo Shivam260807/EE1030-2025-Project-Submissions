@@ -1,0 +1,151 @@
+\documentclass{article}
+\usepackage[a4paper,margin=1.5cm]{geometry}
+\usepackage{amsmath,amsfonts}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{xparse}
+\usepackage{diagbox}
+\usepackage{adjustbox}
+\usepackage{array}
+\title{Software Project\\ Image Compression Using Truncated SVD}
+\author{Shivam Sawarkar \\ \textbf{AI25BTECH11031}}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\section*{1. Background}
+A grayscale image can be represented as a matrix $A \in \mathbb{R}^{m \times n}$, 
+where each entry $a_{ij}$ corresponds to the pixel intensity 
+($0 =$ black, $255 =$ white$)$.
+
+The \textbf{Singular Value Decomposition (SVD)} expresses $A$ as:
+\[
+A = U \Sigma V^T
+\]
+where:
+\begin{itemize}
+    \item $U$ and $V$ are orthogonal matrices,
+    \item $\Sigma$ is a diagonal matrix with singular values in decreasing order.
+\end{itemize}
+
+A low-rank approximation of $A$ can be obtained by keeping only the top $k$ singular values:
+\[
+A_k = U_k \Sigma_k V_k^T
+\]
+This truncated version $A_k$ preserves most of the important image content while using far fewer values, forming the basis of image compression.
+
+\section*{2. Summary of Gilbert Strang’s Video on SVD}
+The lecture explains the Singular Value Decomposition (SVD) of a matrix, highlighting its importance in transforming any matrix into a product of orthogonal matrices and a diagonal matrix. \\ \\ 
+
+In his lecture prof. Gilbert Strang says:
+\begin{enumerate}
+    \item SVD is the best factorization of a matrix, consisting of two orthogonal matrices and a diagonal matrix.
+    \item The goal of SVD is to find orthonormal bases for the row and column spaces of a matrix, allowing for diagonalization.
+    \item The eigenvectors of $A^TA$ provide the orthogonal matrix $V$ in SVD, while the eigenvectors of $AA^T$ provide the orthogonal matrix $U$.
+    \item The diagonal entries of the matrix $\Sigma$ in SVD are the square roots of the eigenvalues from $A^TA$ or $AA^T$.
+\end{enumerate}
+
+\section*{3. Algorithm Explanation}
+\subsection*{Mathematical Basis}
+
+\subsection*{Steps}
+\begin{enumerate}
+    \item Read grayscale image in PGM format and store as matrix $A$ (convert in PGM if  it is JPG).
+    \item Compute $A^TA$ and $AA^T$.
+    \item Use Power Iteration to find top eigenvalues and eigenvectors.
+    \item Construct $U, \Sigma, V^T$.
+    \item Truncate to top $k$ singular values.
+    \item Reconstruct $A_k = U_k \Sigma_k V_k^T$.
+    \item Write $A_k$ as new PGM file.
+    \item Give output as .pgm or .jpg
+\end{enumerate}
+
+\section*{4. Pseudocode}
+\noindent
+Input: Grayscale image file (.pgm) \\
+Output: Reconstructed compressed image (.pgm)
+
+\begin{enumerate}
+\item Read PGM image $\rightarrow$ matrix $A[m][n]$ (Convert to PGM first if the input is JPG)
+\item Compute $A^TA$
+\item For $i = 1, 2, \dots, k$: \\
+\hspace{1em} Use power iteration on $A^TA$ to find top-$k$ eigenvectors $V$ \\
+\hspace{1em} Compute $\sigma_i = \sqrt{\lambda_i}$
+\item Compute $U_i = \frac{A V_i}{\sigma_i}$
+\item Form $A_k = U_k \Sigma_k V_k^T$
+\item Write $A_k$ to output PGM file (or JPG file)
+\item Compute error $\|A - A_k\|_F$
+\end{enumerate}
+
+\section*{5. Algorithm Comparison for Computing SVD}
+
+The below table compares various algorithms for calculating based on there speed, accuracy, and ease of coding
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{3cm}|p{5.2cm}|p{2cm}|p{2cm}|p{2.2cm}|}
+\hline
+\textbf{Algorithm} & \textbf{Description} & \textbf{Speed} & \textbf{Accuracy} & \textbf{Ease of Coding} \\ 
+\hline
+Jacobi Method & Iterative Givens rotations to diagonalize the matrix; accurate but computationally heavy. & Slow & Very High & Moderate \\ 
+\hline
+Golub--Reinsch & Reduces the matrix to bidiagonal form using Householder reflections before SVD computation. & Fast & High & Complex \\ 
+\hline
+Power Iteration & Repeatedly estimates dominant eigenvectors to find top singular values (used for truncated SVD). & Medium & Moderate & Easy \\ 
+\hline
+Lanczos Method & Improves power iteration with orthogonalization, making it efficient for large or sparse matrices. & Very Fast & High & Complex \\ 
+\hline
+Randomized SVD & Uses random projections to approximate dominant singular subspace with less computation. & Medium & Moderate & Easy \\ 
+\hline
+\end{tabular}
+\caption{Algorithms for calculating SVD}
+\end{table}
+
+\noindent
+\textbf{Result:}  
+The Jacobi method provides the highest accuracy but is computationally difficult. 
+The Golub--Reinsch algorithm, which reduces the matrix to a bidiagonal form before performing SVD.  
+
+For this project, I have chosen the Power Iteration method because:
+\begin{itemize}
+    \item It computes only the top $k$ singular values and vectors, which is sufficient for image compression.
+    \item It is easy to implement from scratch in C without using external libraries.
+    \item It is moderately accurate and easy to code.
+\end{itemize}
+
+\section*{6. Discussion}
+\begin{itemize}
+    \item Increasing $k$ improves quality but takes more time.
+    \item Computation time grows with image size and number of singular values computed.
+    \item The first few singular values capture most of the image data. Beyond a certain $k$, additional singular values contribute very less to visual improvement but greatly increase computation.
+    \item The Power Iteration method performs well for truncated SVD, though convergence slows for close or repeated singular values.
+\end{itemize}
+
+\section*{7. Error Analysis}
+The approximation accuracy is measured using the Frobenius norm:
+\[
+\|A - A_k\|_F = \sqrt{\sum_{i,j} (A_{ij} - A_{k,ij})^2}
+\]
+As $k$ increases, the error decreases because smaller singular values contribute less to the total image energy.
+
+\section*{8. Conclusion}
+The project demonstrates image compression using truncated SVD implemented entirely in C.  
+Results show that:
+\begin{itemize}
+    \item Low-rank approximation reduces storage effectively.
+    \item SVD captures the essential image features.
+    \item There exists a clear trade-off between compression ratio and quality.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[a4paper,margin=1.5cm]{geometry}
+\usepackage{amsmath,amsfonts}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{xparse}
+\usepackage{diagbox}
+\usepackage{adjustbox}
+\usepackage{array}
+\title{Software Project Image Compression Using Truncated SVD \\ Error Analysis}
+\author{Shivam Sawarkar \\ \textbf{AI25BTECH11031}}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+
+\section{Globe}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|p{4cm}|}
+    \hline
+        Value of k & Frobenius error & Relative error & Compression ratio & Visual quality \\ \hline
+        10         & 15108.69        & 0.095550       & 42.927666              & Image cannot be identified big pixels appear \\ \hline
+        20         & 10656.55        & 0.067394       & 21.463833              & continents are visible but still not clear   \\ \hline
+        50         & 6195.86         & 0.039184       & 8.585607               & Shape visible with bad texture               \\ \hline
+        100        & 3695.64         & 0.023271       & 4.292785               & Sharp boundaries with bad texture            \\ \hline
+        200        & 1795.41         & 0.011355       & 2.146397               & Close to original                            \\ \hline
+    \end{tabular}
+    \caption{}
+    \label{tab:placeholder}
+\end{table}
+
+\section{Einstein}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|p{4cm}|}
+    \hline
+        Value of k & Frobenius error & Relative error & Compression ratio & Visual quality \\ \hline
+        5          & 4716.58         & 0.216617               & 18.34795                  & Image cannot be identified big pixels appear \\ \hline
+        10         & 3250.93         & 0.149304               & 9.173975                  & Blur image appears                           \\ \hline
+        20         & 2127.95         & 0.097730               & 4.586987                  & Face visible                                 \\ \hline
+        50         & 881.85          & 0.040501               & 1.834798                  & Image can be identified but bad texture      \\ \hline
+        100        & 167.37          & 0.007687               & 0.917398                  & Close to original                            \\ \hline
+    \end{tabular}
+    \caption{}
+    \label{tab:placeholder}
+\end{table}
+
+\section{Grayscale}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|p{4cm}|}
+    \hline
+        Value of k & Frobenius error & Relative error & Compression ratio & Visual quality \\ \hline
+        10         & 6831.05         & 0.035269         & 51.175012                  & Numbers are not visible and lines appear on image \\ \hline
+        20         & 3412.2          & 0.017617         & 25.587506                  & Numbers are little blur                           \\ \hline
+        50         & 947.46          & 0.004892         & 10.235002                  & Close to original image                           \\ \hline
+        100        & 467.74          & 0.002415         & 5.117501                  & Close to original image                           \\ \hline
+        200        & 257.73          & 0.001331         & 2.558751                  & Close to original image                           \\ \hline
+    \end{tabular}
+    \caption{}
+    \label{tab:placeholder}
+\end{table}
+
+\newpage
+\section{Index}
+\[
+\text{Frobenius Error} = \|A - A_k\|_F = \sqrt{\sum_{i=1}^{m}\sum_{j=1}^{n} (A_{ij} - A_{k,ij})^2}
+\]
+\[
+\text{Relative Error} = \frac{\|A - A_k\|_F}{\|A\|_F}
+\]
+\[
+\text{Compression Ratio} = \frac{m \times n}{k (m + n + 1)}
+\]
+
+
+
+
+\end{document}
